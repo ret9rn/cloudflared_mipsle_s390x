@@ -1,4 +1,4 @@
-name: Build CF_mipsle_mips,Alist_mipsle，Openlist_mipsle
+name: Build CF_mipsle_mips,Alist_mipsle，Openlist_mipsle, CF_s390x
 on:
   schedule:
     - cron: '0 3 * * *'
@@ -57,6 +57,13 @@ jobs:
           /opt/st/strip cloudflared-linux-mips
           /opt/upx-3.95-amd64_linux/upx --lzma --best cloudflared-linux-mips
           echo $(md5sum cloudflared-linux-mips | awk '{print $1;}') >MD5_cloudflared-linux-mips.txt
+          
+          # Build for s390x
+          GOOS=linux GOARCH=s390x GOMIPS=softfloat make cloudflared
+          mv cloudflared cloudflared-linux-s390x  
+          /opt/st/strip cloudflared-linux-s390x
+          /opt/upx-3.95-amd64_linux/upx --lzma --best cloudflared-linux-s390x
+          echo $(md5sum cloudflared-linux-mips | awk '{print $1;}') >MD5_cloudflared-linux-s390x.txt
 
           # dowload Alist V3.42.0 alist-linux-musl-mipsle.tar.gz
           wget https://github.com/AlistGo/alist/releases/download/v3.42.0/alist-linux-musl-mipsle.tar.gz
@@ -99,3 +106,5 @@ jobs:
               ../src/MD5_alist_mipsle.txt
               ../src/openlist_mipsle
               ../src/MD5_openlist_mipsle.txt
+              ../src/cloudflared-linux-s390x
+              ../src/MD5_cloudflared-linux-s390x.txt
